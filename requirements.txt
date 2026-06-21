@@ -5,3 +5,4 @@ xgboost>=2.0
 matplotlib>=3.7
 openpyxl>=3.1
 yfinance>=0.2.40
+statsmodels>=0.14

@@ -1,104 +1,101 @@
-# ML-Enhanced Momentum Trading Strategy
+# ML-Enhanced Momentum Trading Strategy — a backtest post-mortem
 
-**16.2% annualized** · **0.70 Sharpe** · **−31.8% max drawdown** · **+2.95%/yr vs. benchmark** · *2011–2024, walk-forward validated, no look-ahead*
+**Gross 16.2% annualized** · **net-negative after realistic costs** · **~99x annual turnover** · **alpha t = 0.93 (not significant)** · *2011–2024, walk-forward, no look-ahead*
 
 > ### The question
-> **Can a machine-learning ensemble turn classic momentum signals into market-beating returns — and if so, where does the edge actually come from?**
+> **Can a machine-learning ensemble turn momentum into *tradeable* alpha — and does the edge survive the tests a gross backtest usually skips?**
 >
 > ### The finding
-> **Yes — but the *why* is the interesting part.** Over 2011–2024 the strategy returned **16.2%/yr vs 13.2%** for the benchmark (**+2.95% annual**, 656% vs 434% total), validated entirely out-of-sample with rolling walk-forward retraining. Decomposing that edge, the model's predictive power lives almost entirely at the **extremes** — its top-decile picks return **1.49%** over the next month vs **0.88%** for the bottom decile, with a flat middle — and the outperformance comes from **concentrating capital in that top decile**, not from broad forecasting skill. The headline is a *thin-but-real* signal amplified by concentration and beta. The value of this project is the framework that lets you **prove** that rather than take the headline at face value.
+> **No — and that is the point of the project.** The gross backtest returns **16.2%/yr** (vs **13.2%** for the benchmark) and looks like a winner. But put it through the checks that actually matter and the edge evaporates: the gross "alpha" is **statistically insignificant** (Jensen α = +3.6%/yr, **t = 0.93**, β = 0.99), and the strategy reconstitutes itself **daily** — trading ~99× per year — so realistic transaction costs turn it **net-negative**. This repo is a case study in *why backtests lie*, and in the turnover, cost, and significance tests that catch it.
+
+---
+
+## 1. The seductive result
+
+On paper, it looks like a winner. A \$1 stake in 2011 grows to ~\$7.6 versus ~\$5.3 for the equal-weighted benchmark — 16.2%/yr, Sharpe 0.70.
 
 ![Cumulative performance vs. benchmark](figures/CHART_1_Performance.png)
 
-*\$1 invested in 2011 grows to ~\$7.6 with the strategy vs ~\$5.3 for the equal-weighted benchmark. Note the two lines track almost identically until ~2020, then diverge — a clue we come back to at the end.*
-
----
-
-## The setup
-
-Momentum — buying recent winners — is one of the most durable anomalies in finance. The hypotheses:
-
-- **H₁:** a non-linear ML ensemble can rank stocks by future outperformance better than a single linear momentum score.
-- **H₀:** the signal is noise; complex models just overfit.
-
-| | |
-|---|---|
-| **Universe** | ~98 large-cap U.S. equities, daily data, 2010–2024 |
-| **Features (25)** | returns, volatility, moving averages, risk-adjusted returns, distance-from-MA across 5 horizons (5–120 days) |
-| **Models** | ensemble of Ridge, Random Forest, XGBoost, Gradient Boosting — weighted by recent validation performance |
-| **Target** | P(stock beats the universe median over the next 21 days) |
-
----
-
-## Step 1 — Does the model actually predict anything?
-
-Before trusting any backtest, the first question is whether the signal ranks stocks *at all*. Sorting every out-of-sample prediction into deciles and measuring the **actual** forward 21-day return of each bucket:
-
-![Forward returns by signal decile](figures/CHART_6_Signal_Buckets.png)
-
-*The edge is real but narrow. Deciles 1–7 are essentially flat (~1.1%); the model's value is at the tails — it cleanly separates the **bottom** decile (0.88%) and especially the **top** decile (1.49%). A ~61 bp/month top-vs-bottom spread from a classifier whose AUC is only ~0.51: modest, but monotonic at the extremes and exactly enough to exploit by holding the top 10%.*
-
-This is the honest core of the result — the model is not a crystal ball, but it reliably flags the strongest and weakest names, which is all a long-only top-decile portfolio needs.
-
----
-
-## Step 2 — From signal to portfolio
-
-- **Selection:** top 10% of stocks by ensemble signal
-- **Sizing:** signal-weighted — stronger predictions get more capital
-- **Rebalance:** weekly (every 5 trading days)
-- **Validation:** rolling walk-forward — train 252d, validate 63d, test 21d, step 5d, **677 windows**, retraining each step so every prediction is genuinely out-of-sample (no look-ahead)
-
----
-
-## Step 3 — The results
+*\$1 → ~\$7.6 (strategy) vs ~\$5.3 (benchmark), +2.95%/yr raw. The lines track almost identically until ~2020, then diverge. "Looks like alpha" — hold that thought.*
 
 ![Annual returns: strategy vs. benchmark](figures/CHART_3_Annual_Returns.png)
 
-*The strategy beats the benchmark in most years, but it is **streaky**: standout years (2021 **+57%**, 2024 **+34%**) carry the record, while it whiffed in 2019 (+10% vs the benchmark's +27%) and fell **−19% in 2022**. The early 2011 stretch (−14%) reflects pre-final strategy iterations. Lumpy outperformance is a hallmark of a concentrated book.*
+*The record is **streaky** — carried by 2021 (+57%) and 2024 (+34%), while it lagged badly in 2019 and lost −19% in 2022. Lumpy outperformance is the fingerprint of a concentrated book, not a steady edge.*
 
-| Metric | Strategy | Benchmark |
+This is where most momentum-ML projects stop. The rest of this README is the part that matters.
+
+---
+
+## 2. Does the model actually predict anything?
+
+Sort every out-of-sample prediction into deciles and measure the **actual** forward 21-day return of each bucket:
+
+![Forward returns by signal decile](figures/CHART_6_Signal_Buckets.png)
+
+*The edge is real but tiny and lives only at the tails: top-decile picks return **1.49%/month** vs **0.88%** for the bottom — a ~61 bp spread from a classifier whose **AUC is only ~0.51**. Deciles 1–7 are essentially noise. There is *a* signal, but it is faint.*
+
+---
+
+## 3. Reality check #1 — is the "alpha" even real?
+
+Regress the strategy's excess returns on the benchmark's (Jensen's alpha, Newey-West/HAC t-stats):
+
+| | gross | net @ 10 bps |
 |---|---:|---:|
-| Total return | **656.3%** | 434.3% |
-| Annualized | **16.17%** | 13.22% |
-| Sharpe | 0.70 | ~0.66 |
-| Sortino | 0.94 | – |
-| Information ratio | 0.21 | – |
-| Beta | 0.995 | 1.00 |
-| Volatility | 22.0% | 16.9% |
-| Max drawdown | −31.8% | −36.2% |
+| Alpha (annualized) | +3.63% | −16.13% |
+| **t-stat** | **0.93** | −4.11 |
+| Beta | 0.99 | 0.99 |
+| R² | 0.58 | 0.58 |
+
+**The gross alpha is statistically insignificant** (t = 0.93, p ≈ 0.35). With β ≈ 1.0, the outperformance is indistinguishable from "more beta plus noise." There is no defensible skill claim before we even mention costs.
 
 ---
 
-## Step 4 — The cost of those returns
+## 4. Reality check #2 — could you actually trade it?
 
-![Drawdown comparison](figures/CHART_2_Drawdown.png)
+The backtest reconstitutes the portfolio **every day** (the "weekly rebalance" in the original write-up is *not* what the code does — a finding in itself), trading **~78% of the book daily** for **~99× annual turnover**. Apply realistic per-trade costs:
 
-*No free lunch — but a useful surprise: against the equal-weighted benchmark the strategy's worst drawdown (**−31.8%**) is actually **shallower** than the benchmark's (−36.2%). The real cost shows up elsewhere — **higher volatility (22% vs 17%)** and big single-year swings (the same concentration that drove +57% in 2021 drove −19% in 2022). Tail risk is meaningful: 95% daily VaR ≈ −2.0%, CVaR ≈ −3.2% (see `figures/CHART_5_Returns_Distribution.png`).*
+![Net return vs. transaction cost](figures/CHART_7_Cost_Sensitivity.png)
 
----
+| scenario | net annual return | Sharpe | max DD |
+|---|---:|---:|---:|
+| Gross | 16.17% | 0.70 | −31.8% |
+| 5 bps (optimistic) | 5.20% | 0.25 | −42.6% |
+| **10 bps (realistic)** | **−4.70%** | **−0.20** | −65.3% |
+| 20 bps (conservative) | −21.80% | −1.10 | −96.8% |
 
-## The real finding — where do the returns come from?
-
-This is where a disciplined backtest earns its keep. Decomposing the +2.95% outperformance:
-
-1. **Beta does much of the work.** Beta ≈ 1.0 with volatility 22% vs 17% — the strategy is essentially a *higher-octane* version of the universe in a 13-year bull market. A meaningful slice of the "alpha" is amplified beta.
-2. **The predictive edge is genuine but small** — visible only at the decile extremes (Step 1), with AUC barely above 0.51.
-3. **Concentration is the engine.** Holding only the signal-weighted top 10% is what converts a thin per-stock signal into portfolio outperformance — and what makes the returns streaky.
-4. **Information ratio 0.21** confirms it: the active risk taken is large relative to the alpha produced.
-
-**Bottom line:** the ML signal is real but modest; the returns are mostly concentration plus beta. That is not a flaw to hide — surfacing it is exactly what the walk-forward framework is built to do.
+At a realistic **10 bps** one-way cost the strategy **loses money** (net α = −16%/yr, t = −4.1). Even an *optimistic* 5 bps (5.2%/yr) **underperforms simply buying and holding** the universe (13.2%). The apparent edge is smaller than the cost of capturing it.
 
 ---
 
-## Limitations & next steps
+## The verdict
 
-- **Survivorship bias** — the universe is *today's* known large-caps; a point-in-time universe would lower returns.
-- **No transaction costs** — weekly rebalancing of a concentrated book would erode the thin edge (~0.5–1%/yr).
-- **Soft benchmark** — measured against an equal-weighted basket of the same names, not an investable index (SPY) or a beta-matched portfolio.
-- **Natural extensions:** SPY/beta-matched benchmark, point-in-time universe, an explicit cost model, and macro features.
+Stacking the three checks together:
+
+1. **The signal is faint** — AUC ≈ 0.51, meaningful only at the decile extremes.
+2. **The gross "alpha" is not statistically significant** — t = 0.93; it is mostly beta and concentration.
+3. **It is untradeable as built** — ~99× turnover makes it net-negative at realistic costs.
+
+The 16% gross headline is a **backtest artifact**. Surfacing that — instead of reporting the gross Sharpe and stopping — *is* the result. A strategy that survives these tests is rare; knowing how to run them is the transferable skill.
+
+## What I would do differently
+
+- **Cut turnover first** — rebalance weekly/monthly and add a turnover penalty / no-trade band so positions change only when the signal moves materially. The daily reconstitution is the single biggest killer.
+- **Cost-aware objective** — optimize net-of-cost return, not gross.
+- **Point-in-time universe** — the current universe is today's known large-caps (survivorship bias inflates the gross number).
+- **Honest benchmark** — beta-matched / SPY comparison, and net-of-cost reporting from the start.
 
 ---
+
+## How it works (methodology)
+
+- **Universe:** ~98 large-cap U.S. equities, daily, 2010–2024.
+- **Features (25):** returns, volatility, moving averages, risk-adjusted returns, distance-from-MA across 5 horizons (5–120 days).
+- **Models:** ensemble of Ridge, Random Forest, XGBoost, Gradient Boosting, weighted by recent validation performance, predicting P(stock beats the universe median next month).
+- **Portfolio:** long-only, top 10% by signal, signal-weighted.
+- **Validation:** rolling walk-forward — train 252d, validate 63d, test 21d, step 5d, **677 windows**, retraining each step (no look-ahead).
+
+Full derivations: [`docs/STRATEGY_REPORT.md`](docs/STRATEGY_REPORT.md) and the original paper ([`docs/ml_momentum_paper.pdf`](docs/ml_momentum_paper.pdf)), which document the *gross* analysis that motivated this post-mortem.
 
 ## Quickstart
 
@@ -106,12 +103,13 @@ This is where a disciplined backtest earns its keep. Decomposing the +2.95% outp
 pip install -r requirements.txt
 
 python download_data.py          # build df_2010.csv from free Yahoo Finance data
-python momentum_ml_framework.py  # run the backtest -> portfolio_returns.csv, strategy_performance.png
-python make_charts.py            # render the charts above from the returns
+python momentum_ml_framework.py  # backtest -> portfolio_returns.csv, portfolio_positions.csv
+python make_charts.py            # gross-performance charts
+python analyze_costs.py          # the reality check: turnover, net-of-cost returns, alpha significance
 ```
 
-Optional out-of-sample feature/signal diagnostics (slower): `python momentum_ml_diagnostics.py` → `outputs/`.
-On Windows, `./run_overnight.ps1` runs every stage (it fetches the data first if needed).
+Optional out-of-sample feature/signal diagnostics: `python momentum_ml_diagnostics.py` → `outputs/`.
+On Windows, `./run_overnight.ps1` runs the pipeline end to end.
 
 ## Data
 
@@ -121,7 +119,7 @@ The original research used **Bloomberg** price data, which is licensed and **not
 date, PX_OPEN, PX_HIGH, PX_LOW, PX_LAST, VOLUME, ticker
 ```
 
-Yahoo's adjustments and survivorship differ from Bloomberg's, so numbers regenerated from the free data will be close but **will not match the headline figures exactly**. The methodology is identical.
+Yahoo's adjustments and survivorship differ from Bloomberg's, so regenerated numbers will be close but not identical. The methodology — and the conclusion — are unchanged.
 
 ## Repository layout
 
@@ -129,21 +127,19 @@ Yahoo's adjustments and survivorship differ from Bloomberg's, so numbers regener
 .
 ├── momentum_ml_framework.py    # walk-forward backtest + performance analysis
 ├── momentum_ml_diagnostics.py  # out-of-sample feature / signal diagnostics
-├── make_charts.py              # render charts from portfolio_returns.csv
+├── analyze_costs.py            # turnover, net-of-cost returns, alpha significance (the reality check)
+├── make_charts.py              # render gross-performance charts
 ├── download_data.py            # build df_2010.csv from free Yahoo Finance data
 ├── run_overnight.ps1           # Windows runner: data -> diagnostics -> backtest -> charts
 ├── requirements.txt
 ├── portfolio_returns.csv       # daily strategy returns (committed result)
 ├── outputs/                    # diagnostic tables (csv + xlsx)
-├── figures/                    # generated charts (CHART_1..6, strategy_performance)
+├── figures/                    # charts (CHART_1..7, strategy_performance)
 └── docs/
-    ├── STRATEGY_REPORT.md      # detailed methodology & results
+    ├── STRATEGY_REPORT.md      # detailed methodology & gross results
     ├── ml_momentum_paper.pdf   # IEEE-format research paper (compiled)
     └── ml_momentum_paper.tex   # paper source (LaTeX)
 ```
-
-For the full methodology and derivations, see [`STRATEGY_REPORT.md`](docs/STRATEGY_REPORT.md) and the paper
-([`ml_momentum_paper.pdf`](docs/ml_momentum_paper.pdf), LaTeX source `docs/ml_momentum_paper.tex`).
 
 ## Author
 
@@ -155,5 +151,4 @@ For the full methodology and derivations, see [`STRATEGY_REPORT.md`](docs/STRATE
 
 ## Disclaimer
 
-Educational research project. Backtested results exclude transaction costs, slippage, and taxes,
-and are not indicative of future performance. Nothing here is investment advice.
+Educational research project. The backtest excludes transaction costs by default — quantifying their effect is the whole point of `analyze_costs.py`. Nothing here is investment advice.

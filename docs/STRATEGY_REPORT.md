@@ -1,6 +1,13 @@
 # Machine Learning Momentum Trading Strategy
 ## Comprehensive Analysis & Results Report
 
+> **Update — read this first.** This report documents the **gross** backtest. A later
+> reality check (see [`../README.md`](../README.md) and [`../analyze_costs.py`](../analyze_costs.py))
+> found the edge does **not** survive scrutiny: the gross alpha is statistically
+> insignificant (t = 0.93, beta 0.99), and at realistic transaction costs the strategy is
+> net-negative (~99x annual turnover). Read the figures below as the gross, pre-cost
+> analysis that motivated that post-mortem.
+
 ---
 
 ## Executive Summary
