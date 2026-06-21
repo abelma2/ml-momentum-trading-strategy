@@ -1,0 +1,50 @@
+# ---------------------------------------------------------------------------
+# Data (NOT redistributed — Bloomberg-licensed source). Regenerate a free,
+# comparable dataset with: python download_data.py
+# ---------------------------------------------------------------------------
+df_2010.csv
+portfolio_positions.csv
+
+# ---------------------------------------------------------------------------
+# Python
+# ---------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.ipynb_checkpoints/
+
+# ---------------------------------------------------------------------------
+# Run logs, scratch, and private dev helpers (kept locally, not published)
+# ---------------------------------------------------------------------------
+*.log
+_run_*.log
+_smoke_run.py
+_smoke_out/
+_smoketest_out/
+_backup_pre_fixes/
+_compare_results.py
+_extract_table_data.py
+_make_bucket_chart.py
+_smoketest_parallel.py
+
+# ---------------------------------------------------------------------------
+# LaTeX build artifacts (keep the .tex and the final .pdf only)
+# ---------------------------------------------------------------------------
+*.aux
+*.out
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.toc
+*.bbl
+*.blg
+
+# ---------------------------------------------------------------------------
+# OS / editor junk
+# ---------------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+~$*
+*.bak
