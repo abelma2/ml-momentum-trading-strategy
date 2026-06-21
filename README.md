@@ -1,5 +1,7 @@
 # ML-Enhanced Momentum Trading Strategy
 
+**16.2% annualized** · **0.70 Sharpe** · **−31.8% max drawdown** · **+2.95%/yr vs. benchmark** · *2011–2024, walk-forward validated, no look-ahead*
+
 > ### The question
 > **Can a machine-learning ensemble turn classic momentum signals into market-beating returns — and if so, where does the edge actually come from?**
 >
