@@ -536,38 +536,38 @@ To speed up backtesting:
 
 ### Strategy Strengths
 
-✅ **Proven Alpha Generation**: 2.95% annual alpha over 13.5 years
-✅ **Robust Methodology**: Walk-forward validation ensures no overfitting
-✅ **Machine Learning Edge**: Captures non-linear momentum patterns
-✅ **Scalable**: Works with different universe sizes
-✅ **Transparent**: All logic is explainable and auditable
+**Proven Alpha Generation**: 2.95% annual alpha over 13.5 years
+**Robust Methodology**: Walk-forward validation ensures no overfitting
+**Machine Learning Edge**: Captures non-linear momentum patterns
+**Scalable**: Works with different universe sizes
+**Transparent**: All logic is explainable and auditable
 
 ### Strategy Weaknesses
 
-⚠️ **Higher Volatility**: 22.02% vs 16.87% market
-⚠️ **Deeper Drawdowns**: -31.84% vs -30% market
-⚠️ **Bull Market Bias**: Performance during 2011-2024 bull market (needs testing in bear markets)
-⚠️ **Transaction Costs**: Real-world costs will reduce returns by ~0.5-1%
-⚠️ **Capacity**: Strategy likely has limited capacity (works best with smaller portfolios)
+**Higher Volatility**: 22.02% vs 16.87% market
+**Deeper Drawdowns**: -31.84% vs -30% market
+**Bull Market Bias**: Performance during 2011-2024 bull market (needs testing in bear markets)
+**Transaction Costs**: Real-world costs will reduce returns by ~0.5-1%
+**Capacity**: Strategy likely has limited capacity (works best with smaller portfolios)
 
 ### Ideal Investor Profile
 
 This strategy is suitable for investors who:
 
-1. ✅ Have **long-term horizon** (5+ years)
-2. ✅ Can tolerate **higher volatility** (22%+)
-3. ✅ Accept **drawdowns up to -40%**
-4. ✅ Seek **equity-like returns with alpha**
-5. ✅ Prefer **systematic, rules-based** approaches
-6. ✅ Have **patience** to stay invested through drawdowns
+1. Have **long-term horizon** (5+ years)
+2. Can tolerate **higher volatility** (22%+)
+3. Accept **drawdowns up to -40%**
+4. Seek **equity-like returns with alpha**
+5. Prefer **systematic, rules-based** approaches
+6. Have **patience** to stay invested through drawdowns
 
 ### NOT Suitable For:
 
-1. ❌ Conservative/risk-averse investors
-2. ❌ Those needing stable income
-3. ❌ Short-term traders (<2 years)
-4. ❌ Cannot tolerate 30%+ drawdowns
-5. ❌ Require daily liquidity with certainty
+1. Conservative/risk-averse investors
+2. Those needing stable income
+3. Short-term traders (<2 years)
+4. Cannot tolerate 30%+ drawdowns
+5. Require daily liquidity with certainty
 
 ### Implementation Recommendations
 

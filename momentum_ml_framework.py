@@ -879,7 +879,7 @@ class PerformanceAnalyzer:
             out_path = os.path.join(output_dir, 'strategy_performance.png')
             plt.savefig(out_path, dpi=300, bbox_inches='tight')
             plt.close()
-            print(f"\n✓ Performance chart saved as '{out_path}'")
+            print(f"\nPerformance chart saved as '{out_path}'")
 
         except ImportError:
             print("\nNote: Install matplotlib to generate performance charts:")
@@ -1002,10 +1002,10 @@ if __name__ == "__main__":
                 
                 # Save results to CSV (script-relative paths)
                 returns_df.to_csv(os.path.join(OUTPUT_DIR, 'portfolio_returns.csv'))
-                print(f"\n✓ Portfolio returns saved to '{os.path.join(OUTPUT_DIR, 'portfolio_returns.csv')}'")
+                print(f"\nPortfolio returns saved to '{os.path.join(OUTPUT_DIR, 'portfolio_returns.csv')}'")
 
                 final_positions.to_csv(os.path.join(OUTPUT_DIR, 'portfolio_positions.csv'))
-                print(f"✓ Portfolio positions saved to '{os.path.join(OUTPUT_DIR, 'portfolio_positions.csv')}'")
+                print(f"Portfolio positions saved to '{os.path.join(OUTPUT_DIR, 'portfolio_positions.csv')}'")
             else:
                 print("\nCould not calculate returns - insufficient data.")
 

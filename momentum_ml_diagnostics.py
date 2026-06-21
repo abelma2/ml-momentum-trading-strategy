@@ -92,7 +92,7 @@ def safe_to_excel(df: pd.DataFrame, path: str, index: bool = False) -> bool:
         return True
     except ModuleNotFoundError as e:
         if "openpyxl" in str(e).lower():
-            print(f"⚠️  Skipping Excel output (missing openpyxl): {path}")
+            print(f"Skipping Excel output (missing openpyxl): {path}")
             print("   Fix: pip install openpyxl")
             return False
         raise
@@ -469,7 +469,7 @@ def run_univariate_oos_walkforward(
     out.to_csv(out_csv, index=False)
     safe_to_excel(out, out_xlsx, index=False)
 
-    print("✓ Univariate OOS walk-forward saved:")
+    print("Univariate OOS walk-forward saved:")
     print("  -", out_csv)
     print("  -", out_xlsx)
     return out
@@ -750,7 +750,7 @@ def run_multivariate_walkforward_with_importance(
     metrics_df.to_csv(metrics_csv, index=False)
     safe_to_excel(metrics_df, metrics_xlsx, index=False)
 
-    print("✓ Window model metrics saved:")
+    print("Window model metrics saved:")
     print("  -", metrics_csv)
     print("  -", metrics_xlsx)
 
@@ -767,7 +767,7 @@ def run_multivariate_walkforward_with_importance(
         perm_df.to_csv(perm_csv)
         safe_to_excel(perm_df, perm_xlsx, index=True)
 
-        print("✓ Permutation importance saved:")
+        print("Permutation importance saved:")
         print("  -", perm_csv)
         print("  -", perm_xlsx)
 
@@ -876,7 +876,7 @@ def forward_expectation_by_signal_bucket(
     agg.to_csv(csv_path, index=False)
     safe_to_excel(agg, xlsx_path, index=False)
 
-    print("✓ Forward expectation by signal bucket saved:")
+    print("Forward expectation by signal bucket saved:")
     print("  -", csv_path)
     print("  -", xlsx_path)
     return agg
@@ -903,7 +903,7 @@ if __name__ == "__main__":
     # OPTIONAL SMALL-SAMPLE DIAGNOSTIC MODE
     # ============================================================
     if RUN_SMALL_SAMPLE:
-        print("\n⚠️ RUNNING SMALL-SAMPLE DIAGNOSTIC MODE")
+        print("\nRUNNING SMALL-SAMPLE DIAGNOSTIC MODE")
 
         assets_keep = (
             data.index.get_level_values("asset")
@@ -928,7 +928,7 @@ if __name__ == "__main__":
             f"{len(data):,} rows"
         )
     else:
-        print("\n▶️ RUNNING FULL DATASET MODE")
+        print("\nRUNNING FULL DATASET MODE")
 
     # build the feature panel ONCE here and share it across all three diagnostic
     # functions. Previously each function called fe.build(data) independently, paying
@@ -989,4 +989,4 @@ if __name__ == "__main__":
         precomputed_panel=SHARED_PANEL,
     )
 
-    print("\n✓ All required diagnostics completed.")
+    print("\nAll required diagnostics completed.")
