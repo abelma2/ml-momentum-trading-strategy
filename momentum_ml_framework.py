@@ -951,6 +951,8 @@ if __name__ == "__main__":
     HERE = os.path.dirname(os.path.abspath(__file__))
     DATA_FILEPATH = os.path.join(HERE, 'df_2010.csv')
     OUTPUT_DIR = HERE  # write portfolio_returns.csv etc. next to the script
+    FIG_DIR = os.path.join(HERE, 'figures')  # charts go in figures/
+    os.makedirs(FIG_DIR, exist_ok=True)
 
     # 1. Load and Preprocess Data
     processed_data = load_and_preprocess_data(DATA_FILEPATH)
@@ -996,7 +998,7 @@ if __name__ == "__main__":
                 analyzer.print_performance_report(metrics)
                 
                 # Try to plot (optional)
-                analyzer.plot_performance(cumulative_returns, drawdown, returns_df, output_dir=OUTPUT_DIR)
+                analyzer.plot_performance(cumulative_returns, drawdown, returns_df, output_dir=FIG_DIR)
                 
                 # Save results to CSV (script-relative paths)
                 returns_df.to_csv(os.path.join(OUTPUT_DIR, 'portfolio_returns.csv'))

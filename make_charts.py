@@ -14,6 +14,8 @@ except Exception:
 
 # Script-relative paths so the script works from any cwd.
 HERE = os.path.dirname(os.path.abspath(__file__))
+FIG_DIR = os.path.join(HERE, 'figures')
+os.makedirs(FIG_DIR, exist_ok=True)
 
 # Load strategy returns
 returns = pd.read_csv(os.path.join(HERE, 'portfolio_returns.csv'))
@@ -71,7 +73,7 @@ ax.text(0.05, 0.95, f'Strategy: ${strategy_cum[-1]:.2f} ({strategy_total_return*
 ax.text(0.05, 0.88, f'Benchmark: ${benchmark_cum[-1]:.2f} ({benchmark_total_return*100:.1f}%)',
         transform=ax.transAxes, fontsize=11, verticalalignment='top',
         bbox=dict(boxstyle='round', facecolor='lightcoral', alpha=0.8))
-plt.savefig(os.path.join(HERE, 'CHART_1_Performance.png'), dpi=200)
+plt.savefig(os.path.join(FIG_DIR, 'CHART_1_Performance.png'), dpi=200)
 plt.close()
 print("OK CHART_1_Performance.png")
 
@@ -100,7 +102,7 @@ ax2.set_ylabel('Drawdown (%)', fontsize=12)
 ax2.grid(True, alpha=0.3)
 ax2.axhline(y=0, color='black', linestyle='-', linewidth=1)
 ax2.legend()
-plt.savefig(os.path.join(HERE, 'CHART_2_Drawdown.png'), dpi=200)
+plt.savefig(os.path.join(FIG_DIR, 'CHART_2_Drawdown.png'), dpi=200)
 plt.close()
 print("OK CHART_2_Drawdown.png")
 
@@ -128,7 +130,7 @@ ax.axhline(y=0, color='black', linestyle='-', linewidth=1)
 ax.legend(fontsize=11)
 ax.grid(True, alpha=0.3, axis='y')
 plt.tight_layout()
-plt.savefig(os.path.join(HERE, 'CHART_3_Annual_Returns.png'), dpi=200)
+plt.savefig(os.path.join(FIG_DIR, 'CHART_3_Annual_Returns.png'), dpi=200)
 plt.close()
 print("OK CHART_3_Annual_Returns.png")
 
@@ -175,7 +177,7 @@ table[(4, 1)].set_facecolor('#C8E6C9')
 table[(4, 1)].set_text_props(weight='bold')
 
 plt.title('Strategy Performance Summary', fontsize=16, fontweight='bold', y=0.98)
-plt.savefig(os.path.join(HERE, 'CHART_4_Metrics_Table.png'), dpi=200)
+plt.savefig(os.path.join(FIG_DIR, 'CHART_4_Metrics_Table.png'), dpi=200)
 plt.close()
 print("OK CHART_4_Metrics_Table.png")
 
@@ -199,7 +201,7 @@ axes[1].set_ylabel('Daily Return (%)', fontsize=12)
 axes[1].grid(True, alpha=0.3, axis='y')
 axes[1].axhline(y=0, color='black', linestyle='-', linewidth=1)
 
-plt.savefig(os.path.join(HERE, 'CHART_5_Returns_Distribution.png'), dpi=200)
+plt.savefig(os.path.join(FIG_DIR, 'CHART_5_Returns_Distribution.png'), dpi=200)
 plt.close()
 print("OK CHART_5_Returns_Distribution.png")
 
